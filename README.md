@@ -48,6 +48,23 @@
 
 ---
 
+## Changes in this Fork
+
+This fork includes several updates and enhancements over the original Chatbox repository:
+
+- **Android Support & Custom Package ID**:
+  - Integrated Android Capacitor 7 native project setup with complete Gradle build tooling and build scripts (`pnpm run android:build`, `pnpm run android:sync`).
+  - Updated package name and `applicationId` to `chat.box.custom`.
+- **OpenAI Responses API with Reasoning Control & Vision**:
+  - Routed OpenAI provider calls through the Responses API (`/v1/responses`).
+  - Added support for image input and reasoning effort configuration (`low`, `medium`, `high`) for reasoning models.
+- **Small-Screen & Mobile Message Actions**:
+  - Restored the message action bar on small screens and mobile layouts so action buttons remain immediately accessible.
+- **Faster Toast Notifications**:
+  - Shortened UI toast notification duration to 1.5 seconds for a snappier, less intrusive user experience.
+
+---
+
 This is the repository for the Chatbox Community Edition, open-sourced under the GPLv3 license.
 
 [Chatbox is going open-source Again!](https://github.com/chatboxai/chatbox/issues/2266)
