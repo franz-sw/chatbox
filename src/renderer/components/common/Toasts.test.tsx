@@ -3,13 +3,17 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { uiStore } from '@/stores/uiStore'
-import Toasts from './Toasts'
+import Toasts, { DEFAULT_TOAST_DURATION } from './Toasts'
 
 vi.mock('@/modals/settings-navigation', () => ({ navigateToSettings: vi.fn() }))
 
 describe('Toasts', () => {
   afterEach(() => {
     uiStore.setState({ toasts: [] })
+  })
+
+  test('defaults autoHideDuration to 1500ms (1.5 seconds)', () => {
+    expect(DEFAULT_TOAST_DURATION).toBe(1500)
   })
 
   test('runs a toast callback and removes the toast', () => {

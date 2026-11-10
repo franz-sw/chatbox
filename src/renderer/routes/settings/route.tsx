@@ -85,7 +85,7 @@ export function RouteComponent() {
       }
     >
       <SettingsRoot />
-      <Toaster richColors position="bottom-center" style={{ zIndex: 2147483647 }} />
+      <Toaster richColors position="bottom-center" duration={1500} style={{ zIndex: 2147483647 }} />
     </Page>
   )
 }

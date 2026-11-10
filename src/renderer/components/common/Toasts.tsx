@@ -5,6 +5,8 @@ import platform from '@/platform'
 import { uiStore } from '@/stores/uiStore'
 import * as toastActions from '../../stores/toastActions'
 
+export const DEFAULT_TOAST_DURATION = 1500
+
 function Toasts() {
   const toasts = useStore(uiStore, (state) => state.toasts)
   return (
@@ -38,7 +40,7 @@ function Toasts() {
             ) : undefined
           }
           anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          autoHideDuration={toast.duration ?? 3000}
+          autoHideDuration={toast.duration ?? DEFAULT_TOAST_DURATION}
         />
       ))}
     </>

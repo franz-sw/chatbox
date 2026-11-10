@@ -300,7 +300,7 @@ export const SettingsModal: FC<SettingsModalProps> = (props) => {
       <Box flex={1} w="100%" maw={1200} mx="auto" className="overflow-auto">
         <RouterProvider router={modalRouter} />
       </Box>
-      <Toaster richColors position="bottom-center" style={{ zIndex: 2147483647 }} />
+      <Toaster richColors position="bottom-center" duration={1500} style={{ zIndex: 2147483647 }} />
     </Modal>
   )
 }

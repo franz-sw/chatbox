@@ -11,7 +11,7 @@ function isTranslatableMessage(message: ErrorToastMessage): message is string {
 
 export function toastError(message: ErrorToastMessage, options?: ErrorToastOptions): void {
   const id = options?.id ?? `toast-error-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-  toast.error(message, { ...options, id })
+  toast.error(message, { duration: 1500, ...options, id })
 
   if (!isTranslatableMessage(message)) {
     return
@@ -30,6 +30,7 @@ export function toastError(message: ErrorToastMessage, options?: ErrorToastOptio
       }
 
       toast.error(message, {
+        duration: 1500,
         ...options,
         id,
         description: translated,

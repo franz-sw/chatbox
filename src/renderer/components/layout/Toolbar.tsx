@@ -91,7 +91,7 @@ export function SessionMenu({
 
   const handleCopySessionId = useCallback(() => {
     copyToClipboard(sessionId)
-    toastActions.add(t('copied to clipboard'), 2000)
+    toastActions.add(t('copied to clipboard'))
   }, [sessionId, t])
 
   const items: ActionMenuItemProps[] = [

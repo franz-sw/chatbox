@@ -443,7 +443,7 @@ const _Message: FC<Props> = (props) => {
 
   const onCopyMsg = useCallback(() => {
     copyToClipboard(getMessageText(msg, true, false))
-    toastActions.add(t('copied to clipboard'), 2000)
+    toastActions.add(t('copied to clipboard'))
   }, [msg, t])
 
   // 复制特定 reasoning 内容
