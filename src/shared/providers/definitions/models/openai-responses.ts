@@ -8,6 +8,7 @@ import type { ProviderModelInfo } from '../../../types'
 import type { ModelDependencies } from '../../../types/adapters'
 import { normalizeOpenAIResponsesHostAndPath } from '../../../utils/llm_utils'
 import { normalizeOpenAIReasoningOptions } from '../../../utils/reasoning-control'
+import { getOpenAIImageGenerationOptions } from './openai-compatible-image'
 
 interface Options {
   apiKey: string
@@ -92,7 +93,7 @@ export default class OpenAIResponses extends AbstractAISDKModel {
     return undefined
   }
 
-  protected getProvider(options: CallChatCompletionOptions, fetchFunction?: FetchFunction) {
+  protected getProvider(options?: CallChatCompletionOptions, fetchFunction?: FetchFunction) {
     return createOpenAI({
       apiKey: this.options.apiKey,
       baseURL: this.options.apiHost,
@@ -139,7 +140,16 @@ export default class OpenAIResponses extends AbstractAISDKModel {
     })
   }
 
-  protected getImageModel() {
-    return null
+  protected getImageModel(modelId?: string) {
+    const provider = this.getProvider(
+      undefined,
+      this.options.customFetch || createFetchWithProxy(this.options.useProxy, this.dependencies)
+    )
+    const imageModelId = modelId || this.options.model.modelId || 'gpt-image-1'
+    return provider.image(imageModelId)
+  }
+
+  protected override getImageGenerationOptions(aspectRatio?: string) {
+    return getOpenAIImageGenerationOptions(this.options.model.modelId, aspectRatio)
   }
 }

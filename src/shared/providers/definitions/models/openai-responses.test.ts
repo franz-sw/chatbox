@@ -9,6 +9,14 @@ class TestOpenAIResponses extends OpenAIResponses {
   public exposeCallSettings(options: CallChatCompletionOptions = {}) {
     return this.getCallSettings(options)
   }
+
+  public exposeImageModel(modelId?: string) {
+    return this.getImageModel(modelId)
+  }
+
+  public exposeImageGenerationOptions(aspectRatio?: string) {
+    return this.getImageGenerationOptions(aspectRatio)
+  }
 }
 
 function createDependencies(): ModelDependencies {
@@ -136,5 +144,27 @@ describe('OpenAIResponses host normalization', () => {
 
     expect(openaiResponses.options.apiHost).toBe('https://api.openai.com/v1')
     expect(openaiResponses.options.apiPath).toBe('/responses')
+  })
+
+  it('normalizes legacy /chat/completions path to /responses', () => {
+    const openaiResponses = createModel({
+      apiHost: 'https://my-proxy.com/v1',
+      apiPath: '/chat/completions',
+    })
+
+    expect(openaiResponses.options.apiHost).toBe('https://my-proxy.com/v1')
+    expect(openaiResponses.options.apiPath).toBe('/responses')
+  })
+})
+
+describe('OpenAIResponses image generation', () => {
+  it('provides an image model and maps aspect ratios', () => {
+    const openaiResponses = createModel({
+      model: { modelId: 'gpt-image-1', type: 'image' },
+    })
+
+    expect(openaiResponses.exposeImageModel()).toBeTruthy()
+    expect(openaiResponses.exposeImageGenerationOptions('1:1')).toEqual({ size: '1024x1024' })
+    expect(openaiResponses.exposeImageGenerationOptions('3:2')).toEqual({ size: '1536x1024' })
   })
 })

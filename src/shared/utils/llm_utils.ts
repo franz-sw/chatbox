@@ -40,6 +40,9 @@ export function normalizeOpenAIApiHostAndPath(
   if (apiHost.endsWith(DEFAULT_PATH)) {
     apiHost = apiHost.replace(DEFAULT_PATH, '')
     apiPath = DEFAULT_PATH
+  } else if (DEFAULT_PATH === '/responses' && apiHost.endsWith('/chat/completions')) {
+    apiHost = apiHost.slice(0, -'/chat/completions'.length)
+    apiPath = DEFAULT_PATH
   }
   // 如果当前配置的是 OpenAI 的 API，统一为默认的 apiHost 和 apiPath
   if (apiHost.endsWith('://api.openai.com') || apiHost.endsWith('://api.openai.com/v1')) {
@@ -72,7 +75,12 @@ export function normalizeOpenAIApiHostAndPath(
 
 export function normalizeOpenAIResponsesHostAndPath(options: { apiHost?: string; apiPath?: string }) {
   const trimmedApiPath = options.apiPath?.trim()
-  const hasCustomApiPath = !!trimmedApiPath && trimmedApiPath !== '/responses'
+  const isLegacyChatCompletionsPath =
+    trimmedApiPath === '/chat/completions' ||
+    trimmedApiPath === 'chat/completions' ||
+    trimmedApiPath === '/v1/chat/completions' ||
+    trimmedApiPath === 'v1/chat/completions'
+  const hasCustomApiPath = !!trimmedApiPath && trimmedApiPath !== '/responses' && !isLegacyChatCompletionsPath
   const normalized = normalizeOpenAIApiHostAndPath(
     hasCustomApiPath ? { ...options, apiPath: trimmedApiPath } : { ...options, apiPath: undefined },
     { apiPath: '/responses' }

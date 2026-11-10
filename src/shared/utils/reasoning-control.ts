@@ -480,7 +480,7 @@ function resolveReasoningReplayRoute(
   if (model?.apiStyle === 'anthropic' && !usesBedrockConverseProtocol(provider)) {
     return { preserveReasoning: 'all-turns', signedReasoningOnly: true, replayNamespaces: ['anthropic'] }
   }
-  if (model?.apiStyle === 'openai-responses') {
+  if (model?.apiStyle === 'openai-responses' || (provider === ModelProviderEnum.OpenAI && model && !model.apiStyle)) {
     return { preserveReasoning: 'all-turns', signedReasoningOnly: true, replayNamespaces: ['openai'] }
   }
   if (model?.apiStyle === 'google') {
@@ -920,9 +920,13 @@ export function getReasoningProviderOptions(
   } else if (isOpenAIStyleEffectiveProvider(effectiveProvider)) {
     // Keep compatible wire mappings in pickOpenAICompatibleReasoningOptions in sync when
     // adding an OpenAI option here. OpenAI-only SDK flags must not leak to compatible APIs.
+    const isResponsesRoute =
+      effectiveProvider === ModelProviderEnum.OpenAIResponses ||
+      (effectiveProvider === ModelProviderEnum.OpenAI && model?.apiStyle !== 'openai') ||
+      model?.apiStyle === 'openai-responses'
     next.openai = {
       reasoningEffort: getOpenAIReasoningEffort(model?.modelId || '', level),
-      ...(effectiveProvider === ModelProviderEnum.OpenAIResponses
+      ...(isResponsesRoute
         ? {
             reasoningSummary: 'auto' as const,
             include: ['reasoning.encrypted_content'],

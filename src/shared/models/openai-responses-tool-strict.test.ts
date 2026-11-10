@@ -105,6 +105,7 @@ async function sendToolRequest(provider: string, modelId: string, reply: string,
 
 describe('Responses tool strict default at the model boundary', () => {
   it.each([
+    ['OpenAI API key', ModelProviderEnum.OpenAI, 'gpt-5.4', { apiHost: 'https://api.openai.com' }],
     ['OpenAI Responses API key', ModelProviderEnum.OpenAIResponses, 'gpt-5.4', { apiHost: 'https://api.openai.com' }],
     ['custom OpenAI Responses provider', 'custom-responses', 'gpt-5.4', { apiHost: 'https://gateway.example/v1' }],
     ['GitHub Copilot Responses model', 'github-copilot', 'gpt-5.6-luna', { apiHost: 'https://api.githubcopilot.com' }],
@@ -117,8 +118,8 @@ describe('Responses tool strict default at the model boundary', () => {
   })
 
   it('leaves Chat Completions tools without a strict field', async () => {
-    const { apiStyle, tools } = await sendToolRequest(ModelProviderEnum.OpenAI, 'gpt-4o', chatCompletionsReply, {
-      apiHost: 'https://api.openai.com',
+    const { apiStyle, tools } = await sendToolRequest(ModelProviderEnum.Moonshot, 'kimi-k2.5', chatCompletionsReply, {
+      apiHost: 'https://api.moonshot.ai/v1',
     })
 
     expect(apiStyle).toBe('openai')

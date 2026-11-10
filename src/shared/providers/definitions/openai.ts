@@ -1,13 +1,12 @@
 import { createOAuthCredentialManager, createOpenAIOAuthFetch, isUsingOAuth } from '../../oauth'
 import { ModelProviderEnum, ModelProviderType } from '../../types'
 import { defineProvider } from '../registry'
-import OpenAI from './models/openai'
 import OpenAIResponses from './models/openai-responses'
 
 export const openaiProvider = defineProvider({
   id: ModelProviderEnum.OpenAI,
   name: 'OpenAI',
-  type: ModelProviderType.OpenAI,
+  type: ModelProviderType.OpenAIResponses,
   modelsDevProviderId: 'openai',
   curatedModelIds: [
     'gpt-5.6-sol',
@@ -33,6 +32,7 @@ export const openaiProvider = defineProvider({
   },
   defaultSettings: {
     apiHost: 'https://api.openai.com',
+    apiPath: '/responses',
     // https://platform.openai.com/docs/models
     models: [
       {
@@ -145,38 +145,25 @@ export const openaiProvider = defineProvider({
     const oauthFetch =
       isOAuth && credentialManager ? createOpenAIOAuthFetch(config.dependencies, credentialManager) : undefined
 
-    if (isOAuth) {
-      return new OpenAIResponses(
-        {
-          apiKey: 'oauth-placeholder',
-          apiHost: config.formattedApiHost,
-          apiPath: '/responses',
-          model: { ...config.model, apiStyle: 'openai-responses' },
-          temperature: config.settings.temperature,
-          topP: config.settings.topP,
-          maxOutputTokens: config.settings.maxTokens,
-          stream: config.settings.stream,
-          useProxy: false,
-          customFetch: oauthFetch,
-          listModelsFallback: config.providerSetting.models || openaiProvider.defaultSettings?.models,
-          skipRemoteModelList: true,
-        },
-        config.dependencies
-      )
-    }
-
-    return new OpenAI(
+    return new OpenAIResponses(
       {
-        apiKey: config.effectiveApiKey,
+        apiKey: isOAuth ? 'oauth-placeholder' : config.effectiveApiKey,
         apiHost: config.formattedApiHost,
-        model: config.model,
-        dalleStyle: config.settings.dalleStyle || 'vivid',
+        apiPath:
+          config.providerSetting.apiPath ||
+          config.globalSettings.providers?.[config.settings.provider!]?.apiPath ||
+          '/responses',
+        model: { ...config.model, apiStyle: 'openai-responses' },
         temperature: config.settings.temperature,
         topP: config.settings.topP,
         maxOutputTokens: config.settings.maxTokens,
-        injectDefaultMetadata: config.globalSettings.injectDefaultMetadata,
-        useProxy: false,
         stream: config.settings.stream,
+        useProxy: isOAuth ? false : config.providerSetting.useProxy,
+        customFetch: oauthFetch,
+        listModelsFallback: isOAuth
+          ? config.providerSetting.models || openaiProvider.defaultSettings?.models
+          : undefined,
+        skipRemoteModelList: isOAuth,
       },
       config.dependencies
     )

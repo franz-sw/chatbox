@@ -4,6 +4,7 @@ import {
   normalizeClaudeHost,
   normalizeGeminiHost,
   normalizeOpenAIApiHostAndPath,
+  normalizeOpenAIResponsesHostAndPath,
 } from './llm_utils'
 
 describe('normalizeOpenAIApiHostAndPath', () => {
@@ -79,6 +80,60 @@ describe('normalizeOpenAIApiHostAndPath', () => {
     const result = normalizeOpenAIApiHostAndPath({}, { apiHost: 'https://custom.api.com', apiPath: '/v2/chat' })
     expect(result.apiHost).toBe('https://custom.api.com')
     expect(result.apiPath).toBe('/v2/chat')
+  })
+})
+
+describe('normalizeOpenAIResponsesHostAndPath', () => {
+  it('defaults to /responses when apiPath is empty or undefined', () => {
+    expect(normalizeOpenAIResponsesHostAndPath({ apiHost: 'https://api.openai.com' })).toEqual({
+      apiHost: 'https://api.openai.com/v1',
+      apiPath: '/responses',
+    })
+  })
+
+  it('rewrites legacy /chat/completions apiPath to /responses', () => {
+    expect(
+      normalizeOpenAIResponsesHostAndPath({
+        apiHost: 'https://my-proxy.com/v1',
+        apiPath: '/chat/completions',
+      })
+    ).toEqual({
+      apiHost: 'https://my-proxy.com/v1',
+      apiPath: '/responses',
+    })
+
+    expect(
+      normalizeOpenAIResponsesHostAndPath({
+        apiHost: 'https://my-proxy.com/v1',
+        apiPath: 'chat/completions',
+      })
+    ).toEqual({
+      apiHost: 'https://my-proxy.com/v1',
+      apiPath: '/responses',
+    })
+  })
+
+  it('strips /chat/completions from apiHost and sets apiPath to /responses', () => {
+    expect(
+      normalizeOpenAIResponsesHostAndPath({
+        apiHost: 'https://my-proxy.com/v1/chat/completions',
+      })
+    ).toEqual({
+      apiHost: 'https://my-proxy.com/v1',
+      apiPath: '/responses',
+    })
+  })
+
+  it('preserves explicit custom non-legacy apiPath', () => {
+    expect(
+      normalizeOpenAIResponsesHostAndPath({
+        apiHost: 'https://my-proxy.com/v1',
+        apiPath: '/custom/responses',
+      })
+    ).toEqual({
+      apiHost: 'https://my-proxy.com/v1',
+      apiPath: '/custom/responses',
+    })
   })
 })
 

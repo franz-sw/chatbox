@@ -124,9 +124,10 @@ describe('getModel', () => {
       platformType: 'mobile',
     })
 
-    expect(model).toBeInstanceOf(OpenAI)
-    expect((model as OpenAI).options.apiKey).toBe('mobile-api-key')
-    expect((model as OpenAI).options.apiHost).toBe('https://mobile-proxy.test/v1')
+    expect(model).toBeInstanceOf(OpenAIResponses)
+    expect((model as OpenAIResponses).options.apiKey).toBe('mobile-api-key')
+    expect((model as OpenAIResponses).options.apiHost).toBe('https://mobile-proxy.test/v1')
+    expect((model as OpenAIResponses).options.apiPath).toBe('/responses')
   })
 
   it('returns OpenAIResponses when openai-responses enables OAuth with shared OpenAI credentials', () => {
