@@ -1,0 +1,31 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "AGENTS.md"
+  ],
+  "watcher": {
+    "ignore": [
+      "dist/**",
+      "release/app/dist/**",
+      "android/app/build/**",
+      "android/.gradle/**",
+      "node_modules/**",
+      "coverage/**"
+    ]
+  },
+  "formatter": true,
+  "commands": {
+    "build-android": {
+      "description": "Build Android debug APK (builds renderer, syncs Capacitor, and runs gradlew assembleDebug)",
+      "template": "Run `pnpm run android:build` in the terminal to build the mobile web bundle and compile the Android debug APK."
+    },
+    "sync-android": {
+      "description": "Compile the web renderer for mobile and sync web assets to the Android Capacitor project",
+      "template": "Run `pnpm run android:sync` to build the mobile bundle and synchronize assets to the Android project."
+    },
+    "check": {
+      "description": "Run TypeScript and biome checks on the codebase",
+      "template": "Run `pnpm run check` and `pnpm run check:packages` to verify TypeScript types across packages."
+    }
+  }
+}

@@ -208,3 +208,13 @@ tmp_*.*
 # Local headless evaluation artifacts
 /jobs/
 /scripts/terminal_bench/__pycache__/
+
+# Android build artifacts
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/*.iml
+android/app/*.iml
+

@@ -713,9 +713,9 @@ const _Message: FC<Props> = (props) => {
     uiStore.getState().openSessionPanel(props.sessionId, 'settings')
   }
 
-  // Small screens have no action row: every message action lives in the long-press menu, composed by the same
-  // rules the mobile app uses.
-  const longPressMenuEnabled = isSmallScreen && !readOnly && buttonGroup !== 'none'
+  // Small screens previously had a long-press menu; in pre-24.x style, actions sit directly
+  // under messages as buttons so users can tap Copy/Retry/Edit directly and select text naturally.
+  const longPressMenuEnabled = false
   const [selectTextOpened, setSelectTextOpened] = useState(false)
   const [selectTextScrollRatio, setSelectTextScrollRatio] = useState(0)
 
@@ -756,58 +756,6 @@ const _Message: FC<Props> = (props) => {
   )
 
   const actionMenuItems = useMemo<ActionMenuItemProps[]>(() => {
-    if (isSmallScreen) {
-      const itemFor = (entry: MessageMenuEntryId): ActionMenuItemProps => {
-        switch (entry) {
-          case 'stop':
-            return {
-              text: t('Stop generating this reply'),
-              icon: IconPlayerStopFilled,
-              testId: TestId.message.actionMenuStop,
-              onClick: () => void handleStop(),
-            }
-          case 'retry':
-            return {
-              text: t('Reply Again'),
-              icon: IconReload,
-              testId: TestId.message.actionMenuRetry,
-              onClick: handleMessageRetry,
-            }
-          case 'reply-below':
-            return {
-              text: t('Reply Again Below'),
-              icon: IconArrowDown,
-              testId: TestId.message.actionMenuRetryBelow,
-              disabled: !replyBelowGate.allowed,
-              onClick: onGenerateMore,
-            }
-          case 'edit':
-            return { text: t('Edit'), icon: IconPencil, testId: TestId.message.actionMenuEdit, onClick: onEditClick }
-          case 'copy':
-            return { text: t('copy'), icon: IconCopy, testId: TestId.message.actionMenuCopy, onClick: onCopyMsg }
-          case 'generate-more-images':
-            return { text: t('Generate More Images Below'), icon: IconPhotoPlus, onClick: onGenerateMore }
-          case 'select-text':
-            return {
-              text: t('Select Text'),
-              icon: IconCursorText,
-              testId: TestId.message.actionMenuSelectText,
-              onClick: () => setSelectTextOpened(true),
-            }
-          case 'quote':
-            return { text: t('Quote'), icon: IconQuoteFilled, testId: TestId.message.actionQuote, onClick: quoteMsg }
-          case 'divider':
-            return { divider: true }
-          case 'report':
-            return { text: t('report'), icon: IconMessageReport, onClick: onReport }
-          case 'view-json':
-            return { text: t('View Message JSON'), icon: IconCode, onClick: onViewMessageJson }
-          case 'delete':
-            return deleteMenuItem
-        }
-      }
-      return longPressMenuEntries.map(itemFor)
-    }
     return [
       {
         text: t('Quote'),
@@ -836,23 +784,7 @@ const _Message: FC<Props> = (props) => {
         : []),
       ...(canDeleteMessage ? [deleteMenuItem] : []),
     ]
-  }, [
-    t,
-    msg.role,
-    onReport,
-    quoteMsg,
-    onViewMessageJson,
-    isSmallScreen,
-    longPressMenuEntries,
-    handleStop,
-    handleMessageRetry,
-    onGenerateMore,
-    onEditClick,
-    onCopyMsg,
-    replyBelowGate.allowed,
-    canDeleteMessage,
-    deleteMenuItem,
-  ])
+  }, [t, msg.role, onReport, quoteMsg, onViewMessageJson, canDeleteMessage, deleteMenuItem])
   const actionMenuTitle = useMemo(() => {
     if (!longPressMenuEnabled) return undefined
     const author = msg.role === 'user' ? t('Me') : msg.role === 'assistant' ? header.name : t('System prompt')
@@ -1277,13 +1209,13 @@ const _Message: FC<Props> = (props) => {
     </Flex>
   )
 
-  const actionButtons = !readOnly && buttonGroup !== 'none' && !showGenerating && !longPressMenuEnabled && (
+  const actionButtons = !readOnly && buttonGroup !== 'none' && !showGenerating && (
     <Flex
       gap={0}
       m={actionRowMargin}
       className={clsx(
         'transition-opacity',
-        getMessageActionVisibilityClass(actionMenuOpened || buttonGroup === 'always')
+        getMessageActionVisibilityClass(isSmallScreen || actionMenuOpened || buttonGroup === 'always')
       )}
       align="center"
     >
@@ -1626,7 +1558,7 @@ export const MessageActionIcon = forwardRef<
     </ActionIcon>
   )
 
-  return tooltip ? (
+  return !isSmallScreen && tooltip ? (
     <Tooltip1 label={tooltip} openDelay={1000} withArrow>
       {actionIcon}
     </Tooltip1>

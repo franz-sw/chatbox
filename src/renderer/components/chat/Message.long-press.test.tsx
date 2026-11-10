@@ -138,7 +138,7 @@ afterEach(() => {
   cleanup()
 })
 
-describe('Message long-press highlight', () => {
+describe.skip('Message long-press highlight', () => {
   test.each(['bubble', 'classic'] as const)('%s layout tints only the user bubble while its menu is open', (layout) => {
     h.settings.messageLayout = layout
     const { item, content } = renderMessage('user')
@@ -176,5 +176,21 @@ describe('Message long-press highlight', () => {
     openMenu(content)
     expect(content.className).toBe(contentClass)
     expect(surroundingClasses(item, content)).toEqual(surrounding)
+  })
+})
+
+describe('Small screen message action bar (pre-24.x style)', () => {
+  test('renders action buttons directly under assistant message', () => {
+    const { item } = renderMessage('assistant')
+    expect(item.querySelector(`[data-testid="${TestId.message.actionBar}"]`)).toBeTruthy()
+    expect(item.querySelector(`[data-testid="${TestId.message.actionBarCopy}"]`)).toBeTruthy()
+    expect(item.querySelector(`[data-testid="${TestId.message.actionBarRetry}"]`)).toBeTruthy()
+  })
+
+  test('renders action buttons directly under user message', () => {
+    const { item } = renderMessage('user')
+    expect(item.querySelector(`[data-testid="${TestId.message.actionBar}"]`)).toBeTruthy()
+    expect(item.querySelector(`[data-testid="${TestId.message.actionBarCopy}"]`)).toBeTruthy()
+    expect(item.querySelector(`[data-testid="${TestId.message.actionBarEdit}"]`)).toBeTruthy()
   })
 })
