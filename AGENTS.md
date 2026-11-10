@@ -66,6 +66,6 @@ Chatbox uses a shared React frontend packaged for Android via **Capacitor 7**:
 
 3. **Capacitor Configuration**:
    - Root configuration is defined in `capacitor.config.ts`.
-   - App ID: `xyz.chatboxapp.ce`
+   - App ID: `chat.box.custom`
    - App Name: `Chatbox`
    - Web directory: `release/app/dist/renderer`

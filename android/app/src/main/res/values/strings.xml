@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Chatbox</string>
     <string name="title_activity_main">Chatbox</string>
-    <string name="package_name">xyz.chatboxapp.ce</string>
-    <string name="custom_url_scheme">xyz.chatboxapp.ce</string>
+    <string name="package_name">chat.box.custom</string>
+    <string name="custom_url_scheme">chat.box.custom</string>
 </resources>

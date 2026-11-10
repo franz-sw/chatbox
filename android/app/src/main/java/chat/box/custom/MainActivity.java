@@ -1,4 +1,4 @@
-package xyz.chatboxapp.ce;
+package chat.box.custom;
 
 import com.getcapacitor.BridgeActivity;
 
